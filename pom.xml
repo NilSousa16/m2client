@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>br.ufba.dcc.wiser</groupId>
+	<artifactId>m2client</artifactId>
+	<version>1.0.0</version>
+	<packaging>bundle</packaging>
+
+	<name>m2client Bundle</name>
+	<description>
+        m2client OSGi bundle project.
+    </description>
+
+	<properties>
+		<maven-bundle-plugin.version>2.5.4</maven-bundle-plugin.version>
+		<osgi.version>6.0.0</osgi.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<version>${osgi.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>${maven-bundle-plugin.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+						<Bundle-Version>${project.version}</Bundle-Version>
+						<Bundle-Activator>br.ufba.dcc.wiser.m2client.Activator</Bundle-Activator>
+						<Export-Package>
+							br.ufba.dcc.wiser.m2client*;version=${project.version}
+						</Export-Package>
+						<Import-Package>
+							*
+						</Import-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
