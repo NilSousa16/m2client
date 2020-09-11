@@ -3,5 +3,22 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
 	xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs">
 
+	<bean id="control_send_gateway_information"
+		class="br.ufba.dcc.wiser.m2client.impl.GatewayInfoImpl"
+		init-method="informationMonitor">
+	</bean>
+
+	<!-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>ROUTECAMEL<<<<<<<<<<<<<<<<<<<<<<<< -->
+
+	<camelContext id="camel"
+		xmlns="http://camel.apache.org/schema/blueprint">
+
+		<route>
+			<from uri="timer://myTimer?period=10000" />
+			<to
+				uri="bean:control_send_gateway_information?method=informationMonitor" />
+		</route>
+
+	</camelContext>
 
 </blueprint>
