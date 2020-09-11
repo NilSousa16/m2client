@@ -15,10 +15,19 @@ public class GatewayInfoImpl implements GatewayInfo {
 	private ServerCommunication serverCommunication;
 
 	/* instance responsible for capturing gateway information */
+	// private String gatewayInfo;
 	
 	/* responsible for indicating the registration of the gateway on the server */
 	public boolean storaged = true; 
 
+	public ServerCommunication getServerCommunication() {
+		return serverCommunication;
+	}
+
+	public void setServerCommunication(ServerCommunication serverCommunication) {
+		this.serverCommunication = serverCommunication;
+	}	
+	
 	public void informationMonitor() {
 		new Thread() {
 			public void run() {
@@ -35,19 +44,16 @@ public class GatewayInfoImpl implements GatewayInfo {
 					try {
 						if(serverCommunication.send(gateway)) {
 							System.out.println("Envio concluído com sucesso!!!!");
+							storaged = false;
 						} else {
 							System.out.println("Envio não foi concluído com sucesso!!!!");
 						}
 					} catch (Exception e) {
 						System.out.println("The data could not be sent");
-						System.out.println("Error: " + e.getMessage());
+						e.printStackTrace();
 					}
-					
-					storaged = false;
-
-					System.out.println("Envio para cadastro concluído com sucesso.");
 				} else {
-					System.out.println("Envio para atualização do status concluído com sucesso.");
+					System.out.println("Envio para atualização do status esperando desenvolvimento.");
 					// condição para envio caso as informações cadastrais já estejam ok! 
 					
 					//informações enviadas são referentes a dados de status dos gateways

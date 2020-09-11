@@ -17,8 +17,9 @@ public class ServerCommunication {
 
 			String jsonObject = gson.toJson(object);
 			
-			if (this.register("http://" + Consts.IP + "/cxf/informationgateway/addgateway", jsonObject))
+			if (this.register("http://" + Consts.IP + ":8181/cxf/m2fot/fot-gateway/", jsonObject)) {
 				return true;
+			}
 		} catch (Exception e) {
 			throw new Exception(e);
 		}
@@ -27,12 +28,9 @@ public class ServerCommunication {
 	}
 
 	private boolean register(String url, String jsonObject) throws Exception {
-		String output = null;
-		
 		try {
 			HttpClient client = new HttpClient();
 			PostMethod mPost = new PostMethod(url);
-
 			mPost.setRequestEntity(new StringRequestEntity(jsonObject, null, null));
 
 			Header mtHeader = new Header();
@@ -40,16 +38,16 @@ public class ServerCommunication {
 			mtHeader.setValue("application/x-www-form-urlencoded");
 			mtHeader.setName("accept");
 			mtHeader.setValue("application/json");
+			
 			mPost.addRequestHeader(mtHeader);
 			client.executeMethod(mPost);
-			output = mPost.getResponseBodyAsString();
+			
 			mPost.releaseConnection();
-			if (output.equals("true")) {
-				System.out.println("Response: " + output);
+			
+			if (mPost.getStatusCode() == 200) {
 				return true;
 			}
 		} catch (Exception e) {
-			// throw new Exception("Exception in adding bucket : " + e);
 			System.out.println("Exception in adding bucket...");
 			throw new Exception(e);
 		}

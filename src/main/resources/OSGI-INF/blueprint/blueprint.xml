@@ -6,6 +6,11 @@
 	<bean id="control_send_gateway_information"
 		class="br.ufba.dcc.wiser.m2client.impl.GatewayInfoImpl"
 		init-method="informationMonitor">
+		<property name="serverCommunication" ref="server_communication" />
+	</bean>
+	
+	<bean id="server_communication"
+		class="br.ufba.dcc.wiser.m2client.communication.ServerCommunication">
 	</bean>
 
 	<!-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>ROUTECAMEL<<<<<<<<<<<<<<<<<<<<<<<< -->
