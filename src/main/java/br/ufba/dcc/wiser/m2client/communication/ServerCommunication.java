@@ -8,22 +8,31 @@ import org.apache.commons.httpclient.methods.StringRequestEntity;
 import com.google.gson.Gson;
 
 import br.ufba.dcc.wiser.m2client.utils.Consts;
+import br.ufba.dcc.wiser.m2model.model.Gateway;
+import br.ufba.dcc.wiser.m2model.model.GatewayStatus;
 
 public class ServerCommunication {
 
 	public boolean send(Object object) throws Exception{
 		try {
 			Gson gson = new Gson();
+			
+			String uri = "";
 
 			String jsonObject = gson.toJson(object);
 			
-			if (this.register("http://" + Consts.IP + ":8181/cxf/m2fot/fot-gateway/", jsonObject)) {
+			if(object instanceof Gateway) {
+				uri = "m2fot/fot-gateway/";
+			} else if(object instanceof GatewayStatus) {
+				uri = "m2fot/fot-gatewaystatus/";
+			}
+			
+			if (this.register("http://" + Consts.IP + ":8181/cxf/" + uri, jsonObject)) {
 				return true;
 			}
 		} catch (Exception e) {
 			throw new Exception(e);
 		}
-		
 		return false;
 	}
 
@@ -51,7 +60,6 @@ public class ServerCommunication {
 			System.out.println("Exception in adding bucket...");
 			throw new Exception(e);
 		}
-
 		return false;
 	}
 
