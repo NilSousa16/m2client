@@ -24,7 +24,7 @@ public class ServerCommunication {
 			if(object instanceof Gateway) {
 				uri = "m2fot/fot-gateway/";
 			} else if(object instanceof GatewayStatus) {
-				uri = "m2fot/fot-gatewaystatus/";
+				uri = "m2fot-status/fot-gateway-status/";
 			}
 			
 			if (this.register("http://" + Consts.IP + ":8181/cxf/" + uri, jsonObject)) {

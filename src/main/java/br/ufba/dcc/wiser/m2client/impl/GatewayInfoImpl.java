@@ -7,7 +7,17 @@ import br.ufba.dcc.wiser.m2client.communication.ServerCommunication;
 import br.ufba.dcc.wiser.m2client.service.GatewayInfo;
 import br.ufba.dcc.wiser.m2model.model.Gateway;
 import br.ufba.dcc.wiser.m2model.model.GatewayStatus;
+import oshi.SystemInfo;
+import oshi.hardware.HardwareAbstractionLayer;
 
+
+/**
+ * Responsible for collecting information from a gateway and sending it to the server
+ * 
+ * It also assesses the need to register the gateway on the server
+ * 
+ * @author Nilson Rodrigues Sousa
+ */
 public class GatewayInfoImpl implements GatewayInfo {
 
 	/* instance responsible for the latest update information */
@@ -17,13 +27,17 @@ public class GatewayInfoImpl implements GatewayInfo {
 	private ServerCommunication serverCommunication;
 
 	/* instance responsible for capturing gateway status information */
-//	private GatewayStatus gatewayStatus;
+	private GatewayHardwareInfoService gatewayHardwareInfo;
 	
 	/* responsible for indicating the registration of the gateway on the server */
 	public boolean storaged = true; 
 	
 	/* simulation of the capture of the gateway's mac address */
 	String macAddress = Integer.toString(new Random().nextInt());
+	
+	/* information hardware */
+	SystemInfo si = new SystemInfo();
+	HardwareAbstractionLayer hal = si.getHardware();
 
 	public ServerCommunication getServerCommunication() {
 		return serverCommunication;
@@ -33,18 +47,31 @@ public class GatewayInfoImpl implements GatewayInfo {
 		this.serverCommunication = serverCommunication;
 	}	
 	
+	public GatewayHardwareInfoService getGatewayHardwareInfo() {
+		return gatewayHardwareInfo;
+	}
+
+	public void setGatewayHardwareInfo(GatewayHardwareInfoService gatewayHardwareInfo) {
+		this.gatewayHardwareInfo = gatewayHardwareInfo;
+	}
+
+	/**
+	 * Method composes information for registering the 
+	 * gateway and sending status information
+	 * 
+	 * @author Nilson Rodrigues Sousa
+	 */
 	public void informationMonitor() {
 		new Thread() {
 			public void run() {
 				if (storaged) {
 					gateway = new Gateway();
 
-					// generating information
-					gateway.setMac(macAddress);
-					gateway.setIp(Integer.toString(new Random().nextInt()));
-					gateway.setHostName(Integer.toString(new Random().nextInt()));					
-					gateway.setManufacturer(Integer.toString(new Random().nextInt()));
-					gateway.setStatus(new Random().nextBoolean());
+					gateway.setMac(gatewayHardwareInfo.getMacAddress());
+					gateway.setIp(gatewayHardwareInfo.getIpAddress());
+					gateway.setHostName(gatewayHardwareInfo.getHostName());					
+					gateway.setManufacturer(gatewayHardwareInfo.getManufacturer());
+					gateway.setStatus(true);
 					
 					try {
 						if(serverCommunication.send(gateway)) {
@@ -55,20 +82,21 @@ public class GatewayInfoImpl implements GatewayInfo {
 						}
 					} catch (Exception e) {
 						System.out.println("The data could not be sent");
-						e.printStackTrace();
+						//e.printStackTrace();
 					}
 				} else {					
-					//informações enviadas são referentes a dados de status dos gateways
+					//information sent refers to the status data of the gateways
 					GatewayStatus gatewayStatus = new GatewayStatus();
 					
 					// generating information
 					gatewayStatus.setGateway(new Gateway());
 					gatewayStatus.setDate(Calendar.getInstance());
-					gatewayStatus.getGateway().setMac(macAddress);
-					gatewayStatus.setBaterryLevel(new Random().nextDouble());
-					gatewayStatus.setUsedMemory(new Random().nextLong());
-					gatewayStatus.setUsedProcessor(new Random().nextDouble());
-					
+					gatewayStatus.getGateway().setMac(gatewayHardwareInfo.getMacAddress());
+					gatewayStatus.getGateway().setStatus(true);
+					gatewayStatus.setBaterryLevel(gatewayHardwareInfo.getLevelBattery());
+					gatewayStatus.setUsedMemory(gatewayHardwareInfo.getMemoryUsed());
+					gatewayStatus.setUsedProcessor(gatewayHardwareInfo.getCPULoad());
+
 					try {
 						if(serverCommunication.send(gatewayStatus)) {
 							System.out.println("Status information has been sent");
