@@ -57,7 +57,7 @@ public class ServerCommunication {
 				return true;
 			}
 		} catch (Exception e) {
-			System.out.println("Exception in adding bucket...");
+			System.out.println("M2Client - Exception in adding bucket...");
 			throw new Exception(e);
 		}
 		return false;

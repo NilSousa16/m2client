@@ -75,13 +75,13 @@ public class GatewayInfoImpl implements GatewayInfo {
 					
 					try {
 						if(serverCommunication.send(gateway)) {
-							System.out.println("Submission completed successfully");
+							System.out.println("M2Client - Gateway registration was successful");
 							storaged = false;
 						} else {
-							System.out.println("Submission was not completed successfully");
+							System.out.println("M2Client - Gateway registration was not successful");
 						}
 					} catch (Exception e) {
-						System.out.println("The data could not be sent");
+						System.out.println("M2Client - Gateway registration data could not be sent");
 						//e.printStackTrace();
 					}
 				} else {					
@@ -99,12 +99,12 @@ public class GatewayInfoImpl implements GatewayInfo {
 
 					try {
 						if(serverCommunication.send(gatewayStatus)) {
-							System.out.println("Status information has been sent");
+							//System.out.println("M2Client - Status information has been sent");
 						} else {
-							System.out.println("Status information was not sent");
+							System.out.println("M2Client - Status information was not sent");
 						}
 					} catch (Exception e) {
-						System.out.println("Error sending status information from gateway");
+						System.out.println("M2Client - Error sending status information from gateway");
 						e.printStackTrace();
 					}
 				}
