@@ -1,9 +1,8 @@
+br/ufba/dcc/wiser/m2client/Activator.class
 br/ufba/dcc/wiser/m2client/utils/Consts.class
-br/ufba/dcc/wiser/m2client/Test.class
 br/ufba/dcc/wiser/m2client/impl/GatewayHardwareInfoService.class
+br/ufba/dcc/wiser/m2client/impl/GatewayInfoImpl$1.class
+br/ufba/dcc/wiser/m2client/service/GatewayInfo.class
 br/ufba/dcc/wiser/m2client/communication/ServerCommunication.class
 br/ufba/dcc/wiser/m2client/impl/GatewayInfoImpl.class
 br/ufba/dcc/wiser/m2client/service/IGatewayHardwareInfo.class
-br/ufba/dcc/wiser/m2client/Activator.class
-br/ufba/dcc/wiser/m2client/impl/GatewayInfoImpl$1.class
-br/ufba/dcc/wiser/m2client/service/GatewayInfo.class
