@@ -19,9 +19,40 @@ package br.ufba.dcc.wiser.m2client;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-public class Activator implements BundleActivator {
+import br.ufba.dcc.wiser.m2client.communication.mqtt.ListenMQTTMessage;
+import br.ufba.dcc.wiser.m2client.communication.mqtt.MQTTClientGateway;
+import br.ufba.dcc.wiser.m2client.services.GatewayStatusChanges;
+import br.ufba.dcc.wiser.m2client.simulation.GatewaySimulator;
+import br.ufba.dcc.wiser.m2client.simulation.GatewayStatusSimulation;
+import br.ufba.dcc.wiser.m2client.utils.Consts;
 
+/**
+ * Responsible for starting the bundle in karaf
+ * 
+ * @author Nilson Rodrigues Sousa
+ */
+public class Activator implements BundleActivator {
+	
+	MQTTClientGateway clientMQTTCommunication = new MQTTClientGateway(Consts.BROKER_IP, null, null);
+	String[] topics = { Consts.SEND_DEVICE_REGISTER, Consts.SEND_DEVICE_INFO, Consts.SEND_DEVICE_SETTINGS };
+
+	GatewayStatusChanges gatewayStatusChanges;
+	
+	GatewayStatusSimulation gatewayStatusSimulation;
+	
+	GatewaySimulator gatewaySimulator;
+	
     public void start(BundleContext context) {
+    	clientMQTTCommunication.start();
+
+		gatewaySimulator = new GatewaySimulator(10);
+		
+		new ListenMQTTMessage(clientMQTTCommunication, 0, gatewaySimulator, topics);
+
+		gatewayStatusChanges = new GatewayStatusChanges(gatewayStatusSimulation);
+		gatewayStatusChanges.start();
+		
+    	
         System.out.println("Starting the bundle - m2client");
     }
 
