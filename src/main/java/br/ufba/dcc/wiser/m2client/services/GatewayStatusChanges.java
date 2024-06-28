@@ -36,7 +36,7 @@ public class GatewayStatusChanges implements Runnable {
 			
 			// Wait 5 seconds between verifications
 			try {
-				Thread.sleep(5000); 
+				Thread.sleep(10000); 
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 				e.printStackTrace();

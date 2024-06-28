@@ -3,32 +3,27 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
 	xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs">
 
-	<!-- <bean id="control_send_gateway_information"
-		class="br.ufba.dcc.wiser.m2client.impl.GatewayInfoImpl"
-		init-method="informationMonitor">
-		<property name="serverCommunication" ref="server_communication" />
-		<property name="gatewayHardwareInfo" ref="gateway_hardware_info" />
-	</bean> -->
-	
-	<!-- <bean id="server_communication"
-		class="br.ufba.dcc.wiser.m2client.communication.ServerCommunication">
+	<!-- <bean id="control_send_gateway_information" class="br.ufba.dcc.wiser.m2client.impl.GatewayInfoImpl" 
+		init-method="informationMonitor"> <property name="serverCommunication" ref="server_communication" 
+		/> <property name="gatewayHardwareInfo" ref="gateway_hardware_info" /> </bean> -->
+
+	<!-- <bean id="listen_mqtt_message"
+		class="br.ufba.dcc.wiser.m2client.communication.mqtt.ListenMQTTMessage">
+		<property name="serverCommunication"
+			ref="server_communication" />
 	</bean>
-	
-	<bean id="gateway_hardware_info"
-		class="br.ufba.dcc.wiser.m2client.impl.GatewayHardwareInfoService">
+
+	<bean id="server_communication"
+		class="br.ufba.dcc.wiser.m2client.interfaces.IServerCommunication">
 	</bean> -->
+
+	<!-- <bean id="gateway_hardware_info" class="br.ufba.dcc.wiser.m2client.impl.GatewayHardwareInfoService"> 
+		</bean> -->
 
 	<!-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>ROUTECAMEL<<<<<<<<<<<<<<<<<<<<<<<< -->
 
-	<!-- <camelContext id="camel"
-		xmlns="http://camel.apache.org/schema/blueprint">
-
-		<route>
-			<from uri="timer://myTimer?period=10000" />
-			<to
-				uri="bean:control_send_gateway_information?method=informationMonitor" />
-		</route>
-
-	</camelContext> -->
+	<!-- <camelContext id="camel" xmlns="http://camel.apache.org/schema/blueprint"> 
+		<route> <from uri="timer://myTimer?period=10000" /> <to uri="bean:control_send_gateway_information?method=informationMonitor" 
+		/> </route> </camelContext> -->
 
 </blueprint>

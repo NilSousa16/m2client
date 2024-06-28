@@ -34,6 +34,7 @@ import br.ufba.dcc.wiser.m2client.utils.Consts;
 public class Activator implements BundleActivator {
 	
 	MQTTClientGateway clientMQTTCommunication = new MQTTClientGateway(Consts.BROKER_IP, null, null);
+	
 	String[] topics = { Consts.SEND_DEVICE_REGISTER, Consts.SEND_DEVICE_INFO, Consts.SEND_DEVICE_SETTINGS };
 
 	GatewayStatusChanges gatewayStatusChanges;
@@ -42,13 +43,21 @@ public class Activator implements BundleActivator {
 	
 	GatewaySimulator gatewaySimulator;
 	
+	/**
+     * Starts the OSGi bundle.
+     * 
+     * @param context The bundle context.
+     */
     public void start(BundleContext context) {
     	clientMQTTCommunication.start();
 
 		gatewaySimulator = new GatewaySimulator(10);
 		
+		gatewayStatusSimulation = new GatewayStatusSimulation(gatewaySimulator.getListGateway());
+		
 		new ListenMQTTMessage(clientMQTTCommunication, 0, gatewaySimulator, topics);
 
+		// Thread for execution change in the status of the gateways
 		gatewayStatusChanges = new GatewayStatusChanges(gatewayStatusSimulation);
 		gatewayStatusChanges.start();
 		
@@ -56,8 +65,12 @@ public class Activator implements BundleActivator {
         System.out.println("Starting the bundle - m2client");
     }
 
+    /**
+     * Stops the OSGi bundle.
+     * 
+     * @param context The bundle context.
+     */
     public void stop(BundleContext context) {
         System.out.println("Stopping the bundle - m2client");
     }
-
 }

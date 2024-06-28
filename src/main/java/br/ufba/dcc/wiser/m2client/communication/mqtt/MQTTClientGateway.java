@@ -56,7 +56,7 @@ public class MQTTClientGateway implements MqttCallbackExtended {
 		try {
 			return client.subscribeWithResponse(topicos, qoss, listners);
 		} catch (MqttException ex) {
-			System.out.println(String.format("Error subscribing to topics %s - %s", Arrays.asList(topicos), ex));
+			System.out.println(String.format("MQTTClientGateway - Error subscribing to topics %s - %s", Arrays.asList(topicos), ex));
 			return null;
 		}
 	}
@@ -68,19 +68,19 @@ public class MQTTClientGateway implements MqttCallbackExtended {
 		try {
 			client.unsubscribe(topicos);
 		} catch (MqttException ex) {
-			System.out.println(String.format("Error when unsubscribing to topic %s - %s", Arrays.asList(topicos), ex));
+			System.out.println(String.format("MQTTClientGateway - Error when unsubscribing to topic %s - %s", Arrays.asList(topicos), ex));
 		}
 	}
 
 	public void start() {
 		try {
-			System.out.println("Connecting to the MQTT broker in " + serverURI);
+			System.out.println("MQTTClientGateway - Connecting to the MQTT broker in " + serverURI);
 			client = new MqttClient(serverURI, String.format("cliente_java_%d", System.currentTimeMillis()),
 					new MqttDefaultFilePersistence(System.getProperty("java.io.tmpdir")));
 			client.setCallback(this);
 			client.connect(mqttOptions);
 		} catch (MqttException ex) {
-			System.out.println("Error connecting to mqtt broker " + serverURI + " - " + ex);
+			System.out.println("MQTTClientGateway - Error connecting to mqtt broker " + serverURI + " - " + ex);
 		}
 	}
 
@@ -92,7 +92,7 @@ public class MQTTClientGateway implements MqttCallbackExtended {
 			client.disconnect();
 			client.close();
 		} catch (MqttException ex) {
-			System.out.println("Error disconnecting from mqtt broker - " + ex);
+			System.out.println("MQTTClientGateway - Error disconnecting from mqtt broker - " + ex);
 		}
 	}
 
@@ -102,24 +102,24 @@ public class MQTTClientGateway implements MqttCallbackExtended {
 				MqttMessage message = new MqttMessage(content.getBytes());
 				message.setQos(qos);
 				client.publish(topic, message);
-				System.out.println("Message published in " + topic);
+				System.out.println("MQTTClientGateway - Message published in " + topic);
 			} else {
-				System.out.println("Client disconnected, topic could not be published " + topic);
+				System.out.println("MQTTClientGateway - Client disconnected, topic could not be published " + topic);
 			}
 		} catch (MqttException ex) {
-			System.out.println("Error publishing " + topic + " - " + ex);
+			System.out.println("MQTTClientGateway - Error publishing " + topic + " - " + ex);
 		}
 
 	}
 
 	@Override
 	public void connectionLost(Throwable thrwbl) {
-		System.out.println("Broker connection lost -" + thrwbl);
+		System.out.println("MQTTClientGateway - Broker connection lost -" + thrwbl);
 	}
 
 	@Override
 	public void connectComplete(boolean reconnect, String serverURI) {
-		System.out.println("MQTT Client " + (reconnect ? "reconnected" : "connected") + " with broker " + serverURI);
+		System.out.println("MQTTClientGateway - MQTT Client " + (reconnect ? "reconnected" : "connected") + " with broker " + serverURI);
 	}
 
 	@Override

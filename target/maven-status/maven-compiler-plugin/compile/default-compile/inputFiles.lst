@@ -4,6 +4,7 @@
 /home/labes2/repositories/wiser/m2client/src/main/java/br/ufba/dcc/wiser/m2client/communication/server/ServerCommunication.java
 /home/labes2/repositories/wiser/m2client/src/main/java/br/ufba/dcc/wiser/m2client/interfaces/GatewayInfo.java
 /home/labes2/repositories/wiser/m2client/src/main/java/br/ufba/dcc/wiser/m2client/interfaces/IGatewaySimulatorMqttInfoService.java
+/home/labes2/repositories/wiser/m2client/src/main/java/br/ufba/dcc/wiser/m2client/interfaces/IServerCommunication.java
 /home/labes2/repositories/wiser/m2client/src/main/java/br/ufba/dcc/wiser/m2client/services/GatewayChanges.java
 /home/labes2/repositories/wiser/m2client/src/main/java/br/ufba/dcc/wiser/m2client/services/GatewayInfoImpl.java
 /home/labes2/repositories/wiser/m2client/src/main/java/br/ufba/dcc/wiser/m2client/services/GatewayStatusChanges.java

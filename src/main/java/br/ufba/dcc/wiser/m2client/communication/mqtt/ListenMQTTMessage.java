@@ -3,8 +3,13 @@ package br.ufba.dcc.wiser.m2client.communication.mqtt;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import com.google.gson.Gson;
+
+import br.ufba.dcc.wiser.m2client.communication.server.ServerCommunication;
+import br.ufba.dcc.wiser.m2client.interfaces.IServerCommunication;
 import br.ufba.dcc.wiser.m2client.simulation.GatewaySimulator;
 import br.ufba.dcc.wiser.m2client.utils.Consts;
+import br.ufba.dcc.wiser.m2model.model.Device;
 
 /**
  * Responsible for receiving and processing mqtt messages
@@ -16,12 +21,16 @@ public class ListenMQTTMessage implements IMqttMessageListener {
 	private MQTTClientGateway clientMQTTCommunication;
 	private GatewaySimulator gatewaySimulator;
 
+	private ServerCommunication serverCommunication;
+
 	/*	 */
 	public ListenMQTTMessage(MQTTClientGateway clientMQTTCommunication, int qos, GatewaySimulator gatewaySimulator,
 			String... topics) {
 
 		this.clientMQTTCommunication = clientMQTTCommunication;
 		this.gatewaySimulator = gatewaySimulator;
+		
+		serverCommunication = new ServerCommunication();
 
 		clientMQTTCommunication.subscribe(qos, this, topics);
 	}
@@ -29,48 +38,54 @@ public class ListenMQTTMessage implements IMqttMessageListener {
 	/*	 */
 	@Override
 	public void messageArrived(String topic, MqttMessage mm) throws Exception {
-		System.out.println("Mensagem recebida:");
-		System.out.println("\tTópico: " + topic);
-		System.out.println("\tMensagem: " + new String(mm.getPayload()));
-		System.out.println("");
+//		System.out.println("Mensagem recebida:");
+//		System.out.println("\tTópico: " + topic);
+//		System.out.println("\tMensagem: " + new String(mm.getPayload()));
+//		System.out.println("");
 
 		if (topic.equals(Consts.SEND_DEVICE_REGISTER)) {
-			System.out.println("ESCUTANDO BROKER DOS DISPOSITIVOS");
-			System.out.println("Função: Envio dos dados cadastrais de um dispositivo para o SERVIDOR");
-			System.out.println("Origem: Dispositivos - m2mqtt");
-			System.out.println("Destino: Servidor - m2server");
-			
-			// chama função do gatewaysimulator
+			System.out.println("ListenMQTTMessage - Enviando dados cadastrais de um dispositivo para o SERVIDOR");
+
+			String jsonMessage = new String(mm.getPayload());
+			Gson gson = new Gson();
+			Device device = gson.fromJson(jsonMessage, Device.class);
+
+			try {
+				if (serverCommunication.send(device)) {
+					System.out.println("ListenMQTTMessage - Informação enviada com sucesso...");
+				} else {
+					System.out.println("ListenMQTTMessage - Falha no envio das informações de cadastro do dispositivo " + device.getId());
+				}
+			} catch (Exception e) {
+				System.out.println("ListenMQTTMessage - Erro no envio de dados para o servidor...");
+//				e.printStackTrace();
+			}
 		} else if (topic.equals(Consts.SEND_DEVICE_INFO)) {
-			System.out.println("ESCUTANDO BROKER DOS DISPOSITIVOS");
-			System.out.println("Função: Envio dos dados sobre o status de um dispositivo para o SERVIDOR "
-					+ " - realizado de forma automática pelo m2mqtt");
-			System.out.println("Origem: Dispositivos - m2mqtt");
-			System.out.println("Destino: Servidor - m2server");
+			System.out.println("ListenMQTTMessage - Envio de dados sobre o cadastro de um dispositivo para o SERVIDOR ");
+
+			String jsonMessage = new String(mm.getPayload());
+			Gson gson = new Gson();
+			Device device = gson.fromJson(jsonMessage, Device.class);
+
+			try {
+				if (serverCommunication.send(device)) {
+					System.out.println("ListenMQTTMessage - Informações sobre o status do dispositivo " + device.getId()
+							+ " foi realizado com sucesso...");
+				} else {
+					System.out.println("ListenMQTTMessage - Falha no envio das informações de status do dispositivo " + device.getId());
+				}
+			} catch (Exception e) {
+				System.out.println("ListenMQTTMessage - M2Client - Error sending status information from gateway");
+//				e.printStackTrace();
+			}
 			
 			// chama função do gatewaysimulator
 		} else if (topic.equals(Consts.SEND_DEVICE_SETTINGS)) {
-			System.out.println("ESCUTANDO BROKER DOS DISPOSITIVOS");
-			System.out.println("Executando o envio dos dados sobre o status de um dispositivo para o SERVIDOR "
-					+ " - solicitaÇÃO realizada pelo servidor ou pelo gateway ");
-			System.out.println("Origem: Dispositivos - m2mqtt");
-			System.out.println("Destino: Servidor - m2server");
-			
+			System.out.println("ListenMQTTMessage - Executando o envio dos dados sobre o status de um dispositivo para o SERVIDOR "
+					+ " - solicitação realizada pelo servidor ou pelo gateway ");
+
 			// chama função do gatewaysimulator
 		}
-		// NÃO É NECESSÁRIO POIS O SERVIDOR ENVIA AS SOLICITAÇÕES VIA REST
-//		} else if (topic.equals(Consts.RECEIVE_DEVICE_MODIFY_SETTINGS)) {
-//			System.out.println("ESCUTANDO BROKER DO SERVER");
-//			System.out.println("Executando o envio dos dados com as configurações a serem implantadas "
-//					+ "em um determinado dispositivo ");
-//			System.out.println("Origem: Servidor - m2server");
-//			System.out.println("Destino: Dispositivos - m2mqtt");
-//		} else if (topic.equals(Consts.RECEIVE_DEVICE_REQUEST)) {
-//			System.out.println("ESCUTANDO BROKER DO SERVER");
-//			System.out.println("Função: Envio de solicitação da configuração de um dispositivo");
-//			System.out.println("Origem: Servidor - m2server");
-//			System.out.println("Destino: Dispositivos - m2mqtt");
-//		}
 	}
 
 }

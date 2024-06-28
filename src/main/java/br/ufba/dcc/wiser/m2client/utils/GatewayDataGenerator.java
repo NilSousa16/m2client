@@ -7,6 +7,8 @@ import java.util.Random;
 /**
  * Utility class for generating various types of data related to IoT gateways
  * and smart city solutions.
+ * 
+ * @author Nilson Rodrigues Sousa
  */
 public class GatewayDataGenerator {
 	
