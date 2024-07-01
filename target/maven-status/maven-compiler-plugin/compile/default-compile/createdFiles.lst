@@ -8,7 +8,6 @@ br/ufba/dcc/wiser/m2client/utils/GatewayDataGenerator.class
 br/ufba/dcc/wiser/m2client/Activator.class
 br/ufba/dcc/wiser/m2client/services/GatewayInfoImpl.class
 br/ufba/dcc/wiser/m2client/interfaces/IServerCommunication.class
-br/ufba/dcc/wiser/m2client/simulation/GatewaySimulator.class
 br/ufba/dcc/wiser/m2client/services/GatewayStatusChanges.class
 br/ufba/dcc/wiser/m2client/interfaces/GatewayInfo.class
 br/ufba/dcc/wiser/m2client/services/GatewayChanges.class

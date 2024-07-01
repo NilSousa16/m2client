@@ -8,7 +8,8 @@
 /home/labes2/repositories/wiser/m2client/src/main/java/br/ufba/dcc/wiser/m2client/services/GatewayChanges.java
 /home/labes2/repositories/wiser/m2client/src/main/java/br/ufba/dcc/wiser/m2client/services/GatewayInfoImpl.java
 /home/labes2/repositories/wiser/m2client/src/main/java/br/ufba/dcc/wiser/m2client/services/GatewayStatusChanges.java
-/home/labes2/repositories/wiser/m2client/src/main/java/br/ufba/dcc/wiser/m2client/simulation/GatewaySimulator.java
+/home/labes2/repositories/wiser/m2client/src/main/java/br/ufba/dcc/wiser/m2client/simulation/GatewaySimulationEnvironment.java
 /home/labes2/repositories/wiser/m2client/src/main/java/br/ufba/dcc/wiser/m2client/simulation/GatewayStatusSimulation.java
+/home/labes2/repositories/wiser/m2client/src/main/java/br/ufba/dcc/wiser/m2client/simulation/GatewaysSimulation.java
 /home/labes2/repositories/wiser/m2client/src/main/java/br/ufba/dcc/wiser/m2client/utils/Consts.java
 /home/labes2/repositories/wiser/m2client/src/main/java/br/ufba/dcc/wiser/m2client/utils/GatewayDataGenerator.java

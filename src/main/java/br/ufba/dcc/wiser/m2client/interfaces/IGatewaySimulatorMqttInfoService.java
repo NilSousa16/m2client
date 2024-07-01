@@ -7,7 +7,7 @@ import br.ufba.dcc.wiser.m2model.model.Gateway;
 
 public interface IGatewaySimulatorMqttInfoService {
 
-	public void createGateway(String mac, String manufacturer, String hostName, boolean status, Calendar date,
+	public void createGateway(String mac, String ip, String manufacturer, String hostName, boolean status, Calendar date,
 			String solution, String coordinates);
 
 	public List<Gateway> getListGateway();

@@ -1,13 +1,11 @@
 package br.ufba.dcc.wiser.m2client.simulation;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
 import com.google.gson.Gson;
 
-import br.ufba.dcc.wiser.m2client.communication.mqtt.MQTTClientGateway;
 import br.ufba.dcc.wiser.m2client.communication.server.ServerCommunication;
 import br.ufba.dcc.wiser.m2client.interfaces.IGatewaySimulatorMqttInfoService;
 import br.ufba.dcc.wiser.m2client.utils.GatewayDataGenerator;
@@ -18,11 +16,10 @@ import br.ufba.dcc.wiser.m2model.model.GatewayStatus;
  * 
  * Responsible for creating and managing simulated gateways
  * 
- * @author Nilson Rodrigues Sousa	
+ * @author Nilson Rodrigues Sousa
  */
-public class GatewaySimulator implements IGatewaySimulatorMqttInfoService {
+public class GatewaySimulationEnvironment implements IGatewaySimulatorMqttInfoService {
 
-	private List<Gateway> listGateways;
 	private GatewayDataGenerator gatewayDataGenerator;
 	private GatewayStatus gatewayStatus;
 	private ServerCommunication serverCommunication;
@@ -39,8 +36,7 @@ public class GatewaySimulator implements IGatewaySimulatorMqttInfoService {
 	private String solution;
 	private String coordinates;
 
-	public GatewaySimulator(int quantityDevices) {
-		listGateways = new ArrayList<>();
+	public GatewaySimulationEnvironment(int quantityDevices) {
 		gatewayDataGenerator = new GatewayDataGenerator();
 		serverCommunication = new ServerCommunication();
 
@@ -48,6 +44,7 @@ public class GatewaySimulator implements IGatewaySimulatorMqttInfoService {
 
 		for (int interator = 0; interator < quantityDevices; interator++) {
 			mac = gatewayDataGenerator.generateRandomMacAddress();
+			ip = gatewayDataGenerator.generateRandomIPAddress();
 			manufacture = gatewayDataGenerator.getRandomManufacturer();
 			hostName = gatewayDataGenerator.generateGatewayHostname();
 			status = random.nextBoolean();
@@ -55,7 +52,7 @@ public class GatewaySimulator implements IGatewaySimulatorMqttInfoService {
 			solution = gatewayDataGenerator.getRandomSolution();
 			coordinates = gatewayDataGenerator.generateRandomCoordinates();
 
-			this.createGateway(mac, manufacture, hostName, status, date, solution, coordinates);
+			this.createGateway(mac, ip, manufacture, hostName, status, date, solution, coordinates);
 
 			try {
 				Thread.sleep(1000);
@@ -65,44 +62,37 @@ public class GatewaySimulator implements IGatewaySimulatorMqttInfoService {
 		}
 	}
 
-	@Override
-	public void createGateway(String mac, String manufacturer, String hostName, boolean status, Calendar date,
-			String solution, String coordinates) {
+	public void createGateway(String mac, String ip, String manufacturer, String hostName, boolean status,
+			Calendar date, String solution, String coordinates) {
 		Gateway gateway = new Gateway(mac, ip, manufacturer, hostName, status, date, solution, coordinates);
 
-		gson = new Gson();
+		Gson gson = new Gson();
 		Object objectGateway = gateway;
 		String jsonObject = gson.toJson(objectGateway);
 
-		// enviar para o server armazenar no banco de dados
-		// com a resposta adicionar no listGateways		
-		System.out.println("GatewaySimulator - Enviando os dados do gateway " + gateway.getMac() + " para armazenamento no servidor.");
-
 		try {
 			serverCommunication.send(jsonObject);
-			listGateways.add(gateway);
+			// GatewaysSimulation.listGateways.add(gateway);
 		} catch (Exception e) {
-			System.out.println("GatewaySimulator - Falha no envio das informações cadastrais para o servidor");
-//			e.printStackTrace();
+			System.out
+					.println("GatewaySimulatorEnvironment - Falha no envio das informações cadastrais para o servidor");
+			// e.printStackTrace();
 		}
-		// RETIRAR APÓS ADICIONAR COMUNICAÇÃO COM O SERVIDOR
-		listGateways.add(gateway);
+		
+		GatewaysSimulation.listGateways.add(gateway); // RETIRAR APÓS ADICIONAR COMUNICAÇÃO COM O SERVIDOR
 	}
 
 	@Override
 	public List<Gateway> getListGateway() {
 		// solicitar do server
-//		System.out.println("GatewaySimulator - Solicita lista de gateways do servidor.");
-
-		return listGateways;
+		return GatewaysSimulation.listGateways.subList(0, GatewaysSimulation.listGateways.size());
 	}
 
 	@Override
 	public Gateway getGatewayById(String mac) {
-		// solicitar do server ou não caso a ideia seja que exista um cache
-		System.out.println("GatewaySimulator - Solicita dados do gateway " + mac + "ao servidor.");
+		// solicitar do server 
 
-		for (Gateway gateway : listGateways) {
+		for (Gateway gateway : GatewaysSimulation.listGateways) {
 			if (gateway.getMac() == mac) {
 				return gateway;
 			}
@@ -114,56 +104,61 @@ public class GatewaySimulator implements IGatewaySimulatorMqttInfoService {
 	public void updateGatewayStatus(String mac, Boolean status) {
 		Gateway gatewayFound = this.getGatewayById(mac);
 		if (gatewayFound != null) {
-			gatewayFound.setStatus(status);;
+			gatewayFound.setStatus(status);
 
 			gson = new Gson();
 			Object objectModifiedGateway = gatewayFound;
 			String jsonObject = gson.toJson(objectModifiedGateway);
-			
-			// Enviar para o server realizar a modificação no banco
-			System.out.println("GatewaySimulator - Enviando os dados do gateway " + gatewayFound.getMac() + "para atualização no servidor.");
+
+			try {
+				serverCommunication.send(jsonObject);
+				// GatewaysSimulation.listGateways.add(gateway);
+			} catch (Exception e) {
+				System.out.println(
+						"GatewaySimulatorEnvironment - Falha no envio das informações de atualização de um gateway para o servidor...");
+				// e.printStackTrace();
+			}
+
+			// verificar se a atualização ocorre na na instância da lista
 
 		} else {
-			System.out.println("GatewaySimulator - Gateway not found.");
+			System.out.println("GatewaySimulatorEnvironment - Gateway not found.");
 		}
 	}
-	
-	public void statusDataGeneration() {
-		// enviar dados para o servidor a cada 10 segundos
-		System.out.println("GatewaySimulator - Enviar dados para o servidor a cada 10 segundos. ");
-		
-		this.listGateways.forEach(gateway -> {
+
+	public void statusDataGeneration() {		
+		GatewaysSimulation.listGateways.forEach(gateway -> {
 			if (random.nextBoolean()) {
-				if(gateway.isStatus()) {
+				if (gateway.isStatus()) {
 					gatewayStatus = new GatewayStatus();
 
 					gatewayStatus.setDate(Calendar.getInstance());
 					gatewayStatus.setBaterryLevel(random.nextDouble());
 					gatewayStatus.setUsedMemory(random.nextDouble());
 					gatewayStatus.setUsedProcessor(random.nextDouble());
-					
+
 					gson = new Gson();
 					Object objectModifiedGateway = gatewayStatus;
 					String jsonObject = gson.toJson(objectModifiedGateway);
-					
+
 					try {
 						serverCommunication.send(jsonObject);
-						listGateways.add(gateway);
+						GatewaysSimulation.listGateways.add(gateway);
 					} catch (Exception e) {
-						System.out.println("GatewaySimulator - Falha no envio das informações de status de um gateway para o servidor");
+						System.out.println(
+								"GatewaySimulatorEnvironment - Falha no envio das informações de status de um gateway para o servidor");
 //						e.printStackTrace();
 					}
-					
-					listGateways.add(gateway);					
+
+					GatewaysSimulation.listGateways.add(gateway);
 				}
 			}
 		});
-		
-		
+
 	}
-	
+
 	public void gatewayMonitor() {
-		this.listGateways.forEach(gateway -> {
+		GatewaysSimulation.listGateways.forEach(gateway -> {
 			if (random.nextBoolean()) {
 				this.updateGatewayStatus(gateway.getMac(), !gateway.isStatus());
 			}

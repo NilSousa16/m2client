@@ -1,14 +1,14 @@
 package br.ufba.dcc.wiser.m2client.services;
 
-import br.ufba.dcc.wiser.m2client.simulation.GatewaySimulator;
+import br.ufba.dcc.wiser.m2client.simulation.GatewaySimulationEnvironment;
 
 public class GatewayChanges implements Runnable {
 
 	private volatile boolean running = true;
-	private GatewaySimulator gatewaySimulator;
+	private GatewaySimulationEnvironment gatewaySimulator;
 	private Thread updaterThread;
 
-	public GatewayChanges(GatewaySimulator gatewaySimulator) {
+	public GatewayChanges(GatewaySimulationEnvironment gatewaySimulator) {
 		this.gatewaySimulator = gatewaySimulator;
 	}
 

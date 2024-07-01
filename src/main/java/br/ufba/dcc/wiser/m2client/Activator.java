@@ -22,7 +22,7 @@ import org.osgi.framework.BundleContext;
 import br.ufba.dcc.wiser.m2client.communication.mqtt.ListenMQTTMessage;
 import br.ufba.dcc.wiser.m2client.communication.mqtt.MQTTClientGateway;
 import br.ufba.dcc.wiser.m2client.services.GatewayStatusChanges;
-import br.ufba.dcc.wiser.m2client.simulation.GatewaySimulator;
+import br.ufba.dcc.wiser.m2client.simulation.GatewaySimulationEnvironment;
 import br.ufba.dcc.wiser.m2client.simulation.GatewayStatusSimulation;
 import br.ufba.dcc.wiser.m2client.utils.Consts;
 
@@ -41,7 +41,7 @@ public class Activator implements BundleActivator {
 	
 	GatewayStatusSimulation gatewayStatusSimulation;
 	
-	GatewaySimulator gatewaySimulator;
+	GatewaySimulationEnvironment gatewaySimulator;
 	
 	/**
      * Starts the OSGi bundle.
@@ -51,11 +51,11 @@ public class Activator implements BundleActivator {
     public void start(BundleContext context) {
     	clientMQTTCommunication.start();
 
-		gatewaySimulator = new GatewaySimulator(10);
+		gatewaySimulator = new GatewaySimulationEnvironment(10);
 		
-		gatewayStatusSimulation = new GatewayStatusSimulation(gatewaySimulator.getListGateway());
+		gatewayStatusSimulation = new GatewayStatusSimulation();
 		
-		new ListenMQTTMessage(clientMQTTCommunication, 0, gatewaySimulator, topics);
+		new ListenMQTTMessage(clientMQTTCommunication, 0, topics);
 
 		// Thread for execution change in the status of the gateways
 		gatewayStatusChanges = new GatewayStatusChanges(gatewayStatusSimulation);
